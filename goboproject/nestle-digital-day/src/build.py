@@ -135,10 +135,10 @@ def rings(style):
 
 def headline(style):
     g = ['<g fill="#FFFFFF">']
-    g.append(line("WELCOME", BOLD_I, 1080, 855))
-    g.append(line("to", BOLD_I, 150, 968))
-    g.append(line("NESTLÉ DIGITAL", BOLD_I, 1290, 1118))
-    g.append(line("SUPPLY CHAIN", BOLD_I, 1175, 1262))
+    g.append(line("WELCOME", BOLD_I, 1080, 808))
+    g.append(line("to", BOLD_I, 150, 953))
+    g.append(line("NESTLÉ DIGITAL", BOLD_I, 1290, 1130))
+    g.append(line("SUPPLY CHAIN", BOLD_I, 1175, 1303))
     g.append("</g>")
     return "\n".join(g)
 
@@ -148,14 +148,14 @@ def cobrand(style, h_sg=76, h_sx=70):
     w_sg, w_sx = h_sg * 5.714, h_sx * 5.517
     gap = 58
     x = C - (w_sg + gap + w_sx) / 2
-    ymid = 1580
+    ymid = 1606
     g = []
     lbl = "PROJECTED BY"
     size = fit(lbl, BOLD, 300, 0.34)
-    d, _ = text_path(lbl, BOLD, size, C, 1466, "middle", 0.34)
+    d, _ = text_path(lbl, BOLD, size, C, 1492, "middle", 0.34)
     g.append(f'<g fill="#FFFFFF" fill-opacity=".62">{d}</g>')
     for dx in (-1, 1):
-        g.append(f'<rect x="{C + dx * 320 - (0 if dx < 0 else 170):.0f}" y="1454" '
+        g.append(f'<rect x="{C + dx * 320 - (0 if dx < 0 else 170):.0f}" y="1480" '
                  f'width="170" height="2" fill="url(#rule)"/>')
     g.append(f'<image href="{data_uri(os.path.join(A, "sg-trim.png"))}" '
              f'x="{x:.1f}" y="{ymid - h_sg / 2:.1f}" width="{w_sg:.1f}" height="{h_sg}"/>')
@@ -218,9 +218,9 @@ def build(style):
              network(proj, style),
              "</g>",
              rings(style),
-             (f'<ellipse cx="{C}" cy="1020" rx="820" ry="430" fill="url(#damp)"/>'
+             (f'<ellipse cx="{C}" cy="1020" rx="830" ry="460" fill="url(#damp)"/>'
               if style == "colour" else
-              f'<ellipse cx="{C}" cy="1020" rx="860" ry="470" fill="url(#dampB)"/>'),
+              f'<ellipse cx="{C}" cy="1020" rx="870" ry="495" fill="url(#dampB)"/>'),
              headline(style),
              cobrand(style),
              "</svg>"]
