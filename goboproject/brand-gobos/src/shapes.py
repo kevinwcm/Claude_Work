@@ -156,3 +156,13 @@ def arc_wordmark(wm, cx, cy, radius, centre_deg, target_deg, colour, opacity=1.0
                    f'<path d="{l["path"]}" fill-rule="evenodd"/></g>')
     return (f'<g fill="{colour}" fill-opacity="{opacity}">' + "".join(out) + "</g>",
             wm["cap"] * scale)
+
+
+def sheared_sector(cx, cy, r0, r1, a0, w, shear, colour, opacity=1.0):
+    """One stripe of a hazard-tape band: crosses the ring at an angle, so
+    the band reads as diagonal safety tape wrapped into a circle."""
+    i0 = pol(cx, cy, r0, a0);        i1 = pol(cx, cy, r0, a0 + w)
+    o1 = pol(cx, cy, r1, a0 + w + shear); o0 = pol(cx, cy, r1, a0 + shear)
+    d = (f"M{P(*i0)} A{r0:.2f},{r0:.2f} 0 0 1 {P(*i1)} L{P(*o1)} "
+         f"A{r1:.2f},{r1:.2f} 0 0 0 {P(*o0)} Z")
+    return f'<path d="{d}" fill="{colour}" fill-opacity="{opacity}"/>'

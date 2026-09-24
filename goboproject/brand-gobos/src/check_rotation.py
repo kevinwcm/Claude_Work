@@ -35,7 +35,7 @@ def main():
         cv2.circle(m, (1000, 1000), 930, 255, -1)
         outside = np.zeros(img.shape[:2], np.uint8)
         cv2.circle(outside, (1000, 1000), 930, 255, -1)
-        cv2.circle(outside, (1000, 1000), 340, 0, -1)     # rings only, no centre mark
+        cv2.circle(outside, (1000, 1000), 400, 0, -1)     # frame only, centre mark excluded
         res = []
         for deg, mask, what in ((90, outside, "rings/type only"),
                                 (90, m, "whole disc"), (180, m, "whole disc")):

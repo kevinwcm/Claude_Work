@@ -26,7 +26,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import logo_trace as LT
 from shapes import (arc, arc_text, arc_text_width_deg, arc_wordmark, chevron,
-                    dot, ngon, P, place, pol, ring, sector, ticks, poly_at)
+                    dot, ngon, P, place, pol, ring, sector, sheared_sector,
+                    ticks, poly_at)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "artwork")
@@ -136,44 +137,54 @@ def syspex_emblem(b):
     return "\n".join(g)
 
 
-def sysguard_emblem(b, helmets=2):
-    """A safety crossing in the round: a radial zebra band inside the name
-    ring, wrapped round the SysGuard helmet."""
-    g = []
-    # radial zebra -- a pedestrian crossing bent into a circle
-    for i in range(24):
-        a = i * 15
-        g.append(sector(C, C, 400, 648, a - 5.6, a + 5.6, b["primary"], .95))
-    g.append(ring(C, C, 656, 7, b["primary"], .9))       # kerb lines
-    g.append(ring(C, C, 392, 7, b["primary"], .9))
-    g.append(ring(C, C, 672, 2.5, b["primary"], .35))
-    # a restrained detection cue: eight cyan sensor arcs (cyan stays an accent)
-    for i in range(8):
-        a = i * 45 + 22.5
-        g.append(arc(C, C, 360, a - 7, a + 7, b["accent"], 5, "round", .85))
-    g.append(ticks(C, C, 330, 344, 24, b["primary"], 3, offset=7.5, opacity=.4))
-    g.append(ring(C, C, 316, 2.5, b["primary"], .4))
-    helm = LT.mark("logo-sysguard-white.png", "yellow", box=(0, 280, 0, 445))
-    if helmets == 4:
-        # four helmets facing outward: whichever side you stand on the
-        # nearest one is upright, and the disc keeps full 4-fold symmetry
-        for i in range(4):
-            g.append(place(helm, C, C, 208, i * 90, 150, b["primary"]))
-        g.append(dot(C, C, 0, 0, 30, b["primary"], .9))
-    elif helmets == 2:
-        # a mirrored pair: upright from either end of the walkway, and the
-        # disc still repeats every 180 degrees
-        for i in range(2):
-            g.append(place(helm, C, C, 158, i * 180, 188, b["primary"]))
-    else:
-        # one upright helmet: truest to the logo, but only right way up
-        # from one side
-        g.append(ring(C, C, 258, 5, b["primary"], .45))
-        g.append(place(helm, C, C, 0, 0, 290, b["primary"], rotate=False))
+def _hazard_tape(b, r0=570, r1=655, n=24, shear=8.0):
+    """Industrial hazard tape wrapped into a ring -- SysGuard's own border
+    motif, and the calmest way to say 'safety' without shouting."""
+    g = [ring(C, C, r1 + 7, 5, b["primary"], .9), ring(C, C, r0 - 7, 5, b["primary"], .9)]
+    for i in range(n):
+        g.append(sheared_sector(C, C, r0, r1, i * 360 / n, 360 / n * 0.5,
+                                shear, b["primary"], .95))
+    return g
+
+
+def _chevron_ring(b, r=612, n=12):
+    """A ring of outward chevrons: directional, open, plenty of black."""
+    g = [ring(C, C, r + 58, 4, b["primary"], .55), ring(C, C, r - 58, 4, b["primary"], .55)]
+    for i in range(n):
+        g.append(chevron(C, C, r, i * 360 / n, 104, 66, 23, b["primary"], .95))
+    return g
+
+
+def _zone_ring(b):
+    """The quietest option: containment rings, ticks and corner brackets."""
+    g = [ring(C, C, 655, 6, b["primary"], .9),
+         ring(C, C, 614, 4, b["primary"], .45, dash="30 26"),
+         ring(C, C, 570, 6, b["primary"], .9),
+         ticks(C, C, 632, 648, 48, b["primary"], 3, opacity=.45)]
+    for i in range(4):
+        a = 45 + i * 90
+        for da, sign in ((-10, 1), (10, -1)):
+            g.append(arc(C, C, 592, a + da - sign * 13, a + da, b["primary"], 9, "round", .95))
+    return g
+
+
+BANDS = dict(tape=_hazard_tape, chevron=_chevron_ring, zone=_zone_ring)
+
+
+def sysguard_emblem(b, band="tape"):
+    """A single upright SysGuard helmet inside one clean safety band."""
+    g = list(BANDS[band](b))
+    g.append(ring(C, C, 506, 3, b["primary"], .35))
+    g.append(ticks(C, C, 486, 500, 24, b["primary"], 3, offset=7.5, opacity=.3))
+    for i in range(4):                       # a restrained detection cue
+        a = 45 + i * 90
+        g.append(arc(C, C, 524, a - 8, a + 8, b["accent"], 5, "round", .85))
+    helm = LT.mark("logo-sysguard-2026.png", "yellow", box=(0, 1250, 0, 2000))
+    g.append(place(helm, C, C, 0, 0, 470, b["primary"], rotate=False))
     return "\n".join(g)
 
 
-def build(b, emblem, wm, suffix="", **kw):
+def build(b, emblem, wm, suffix="", ret_r=640, **kw):
     print(f" - {b['file']}{suffix}")
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{S}" height="{S}" '
@@ -183,7 +194,8 @@ def build(b, emblem, wm, suffix="", **kw):
         f'Type and marks traced from the approved logo files. '
         f'Black = no light, colour = open aperture. -->',
         f'<rect width="{S}" height="{S}" fill="{BG}"/>',
-        rim(b), name_band(b, wm), reticle(b), emblem(b, **kw),
+        rim(b), name_band(b, wm),
+        reticle(b, ret_r) if ret_r else "", emblem(b, **kw),
         "</svg>",
     ]
     svg = "\n".join(parts)
@@ -197,11 +209,11 @@ if __name__ == "__main__":
     sx_wm = LT.wordmark("logo-syspex-white.png", SX_WORD, expect=6)
     sg_wm = LT.wordmark("logo-sysguard-white.png", SG_WORD, expect=8)
     jobs = [(SYSPEX, syspex_emblem, sx_wm, "", {}),
-            # the mirrored pair is the recommended one: the helmet stays
-            # unmistakable and the disc still repeats every 180 degrees
-            (SYSGUARD, sysguard_emblem, sg_wm, "", dict(helmets=2)),
-            (SYSGUARD, sysguard_emblem, sg_wm, "-alt-four-helmets", dict(helmets=4)),
-            (SYSGUARD, sysguard_emblem, sg_wm, "-alt-single-helmet", dict(helmets=1))]
+            # hazard tape is the recommended band -- see the README
+            # no reticle on SysGuard: the tape band already occupies that ring
+            (SYSGUARD, sysguard_emblem, sg_wm, "", dict(ret_r=None, band="tape")),
+            (SYSGUARD, sysguard_emblem, sg_wm, "-alt-chevron", dict(ret_r=None, band="chevron")),
+            (SYSGUARD, sysguard_emblem, sg_wm, "-alt-zone", dict(ret_r=None, band="zone"))]
     for b, em, wm, suffix, kw in jobs:
         path, svg = build(b, em, wm, suffix, **kw)
         cairosvg.svg2png(bytestring=svg.encode(), output_width=2000, output_height=2000,
