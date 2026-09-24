@@ -2,9 +2,13 @@
 """Project the "Powered by Syspex / Secured by SysGuard" zebra onto the aisle
 floor, in true perspective at its real 5.8 m x 2.4 m size.
 
-Placement: bars repeat along the aisle (like the old zebra), and the 2.4 m
-width is centred on the painted band's aisle-side edge (w = 1.20 m), so
-half the projection lies on the yellow paint and half on the grey floor.
+Placement: bars repeat along the aisle (like the old zebra). The rack-side
+edge sits flush with the painted band's outer edge (w = 1.92 m), so it covers
+the whole band and nothing spills toward the racking. Lengthwise it runs from
+the bottom of the frame to just before the band's curve at the end of the
+racking (u = 12.0 m). That makes it 10 m long but still 2.4 m wide: the
+design is stretched along the aisle, which is what a projector aimed down
+the aisle at a shallow angle does.
 
 Input:  ../reference/aisle-old-zebra-removed.png  (from erase_old_zebra.py)
         ../reference/powered-by-syspex.pdf        (page 1 = the design)
@@ -22,9 +26,10 @@ PDF = os.path.join(HERE, "..", "reference", "powered-by-syspex.pdf")
 OUT = os.path.join(HERE, "..", "mockups", "aisle-syspex-zebra-mockup.jpg")
 
 BOX = (170.2, 731.2, 2079.8, 1518.8)       # design extent in the PDF (pt)
-LEN, WID = 5.8, 2.4                          # metres, from the PDF's dimension callouts
-U0 = 2.0                                     # near end, metres along the aisle
-W_CENTRE = 1.20                              # painted band's aisle-side edge
+WID = 2.4                                    # metres, from the PDF's dimension callouts
+U0, U1 = 2.0, 12.0                           # near end .. just before the band's curve
+LEN = U1 - U0
+W_RACK_EDGE = 1.92                           # painted band's rack-side edge
 SS = 3
 
 
@@ -55,7 +60,7 @@ def main():
     H, W = img.shape[:2]
     art = design()
     ah, aw = art.shape[:2]
-    w0, w1 = W_CENTRE - WID / 2, W_CENTRE + WID / 2
+    w0, w1 = W_RACK_EDGE - WID, W_RACK_EDGE
     # design x -> along the aisle (u), design y -> lateral (-w): not mirrored
     dst = np.float32([to_img(U0, w1), to_img(U0 + LEN, w1),
                       to_img(U0 + LEN, w0), to_img(U0, w0)]) * SS
@@ -65,10 +70,16 @@ def main():
     beam = cv2.resize(beam, (W, H), interpolation=cv2.INTER_AREA)
     beam = cv2.GaussianBlur(beam, (0, 0), 0.6)
 
-    # projected light: brightens what's under it (floor texture shows
-    # through), plus a little direct light and a soft bloom
-    lit = img * (1 + 1.25 * beam) + 95 * beam
-    lit += cv2.GaussianBlur(beam, (0, 0), 5) * 30
+    # projected light, kept modest: a gobo in a lit warehouse lifts the floor
+    # rather than glowing. Brightens what's under it (texture shows through),
+    # desaturated slightly, fading a little with throw distance.
+    grey = beam.mean(-1, keepdims=True)
+    beam = 0.75 * beam + 0.25 * grey
+    ys = np.arange(H, dtype=np.float32)[:, None, None]
+    fade = np.clip(1 - (1100 - ys) / 1100 * 0.35, 0.65, 1)
+    beam = beam * fade
+    lit = img * (1 + 0.55 * beam) + 22 * beam
+    lit += cv2.GaussianBlur(beam, (0, 0), 4) * 6
     T = 215.0
     lit = np.where(lit > T, T + (255 - T) * (1 - np.exp(-(lit - T) / (255 - T))), lit)
     # keep the photo's feathered white frame on top

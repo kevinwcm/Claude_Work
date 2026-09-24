@@ -22,12 +22,24 @@ yellow bars by hue (the paint is orange-yellow, the old bars lemon-yellow).
 **Size and position.** The floor model is rebuilt from the photo's
 vanishing points and checked against the scene: the bollards measure
 1.04 m and stand on one line, and the painted band is a constant 0.72 m
-wide all along the aisle. The design is placed at its real **5.8 m × 2.4 m**,
-bars repeating along the aisle like the old zebra. It is centred on the
-band's aisle-side edge, so **half lies on the yellow paint and half on the
-grey floor** (per Kevin). The rack-side edge ends just short of the bollards.
+wide all along the aisle. The projection is 2.4 m wide, with its rack-side
+edge flush with the band's outer edge, so it covers the whole painted band
+without spilling toward the racking. It runs 10 m along the aisle, from the
+bottom of the frame to just before the band curves at the end of the
+racking. Bars repeat along the aisle like the old zebra.
 
-**Light, not paint.** The design brightens the surface under it, so floor
-texture shows through; black text and outlines stay unlit. On the yellow
+At 10 m × 2.4 m the design is stretched lengthwise compared with its
+native 5.8 m × 2.4 m. That's what happens when a gobo projector is aimed
+down an aisle at a shallow angle. For true proportions over that length
+you'd need two projectors end to end.
+
+(An earlier version centred the width on the band's inner edge. Since the
+band is only 0.72 m wide, that pushed 0.5 m onto the strip in front of the
+bollards, too close to the racking.)
+
+**Light, not paint.** Kept deliberately modest: in a lit warehouse a gobo
+lifts the floor rather than glowing. It brightens the surface under it
+(texture shows through), slightly desaturated, fading a little with throw
+distance; black text and outlines stay unlit. On the yellow
 paint, the white bars stand out while the yellow bars blend in, as real
 projected light would.
