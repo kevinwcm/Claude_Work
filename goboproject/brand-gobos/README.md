@@ -1,84 +1,100 @@
 # Syspex & SysGuard round brand gobos
 
-Two new round gobos, one per brand, designed so the projection reads
-correctly however the projector is rotated or aligned.
+Two round gobos, one per brand, designed so the projection reads correctly
+however the projector is rotated or aligned.
 
 | File | What it is |
 |---|---|
-| `artwork/gobo-syspex.svg` / `gobo-sysguard.svg` | Production masters (vector) |
+| `artwork/gobo-syspex.svg` | Syspex production master |
+| `artwork/gobo-sysguard.svg` | SysGuard production master (mirrored helmet pair) |
+| `artwork/gobo-sysguard-alt-single-helmet.svg` | Variant: one upright helmet |
+| `artwork/gobo-sysguard-alt-four-helmets.svg` | Variant: four helmets in a rosette |
 | `artwork/*-2000.png` | 2000 px flat previews |
 | `artwork/*-rotation-test.png` | The same gobo at 0°, 15°, 30° and 45° |
 | `artwork/*-floor-preview.jpg` | Shown as projected light on a real floor |
-| `reference/logo-*.png` | The approved logo files the design was built against |
-| `src/build_gobos.py` | Generates both gobos (all layout values at the top) |
-| `src/shapes.py` | Text-on-a-circle and the geometric primitives |
+| `reference/logo-*.png` | The approved logo files everything is traced from |
+| `src/logo_trace.py` | Pulls the letterforms and marks out of the logo files |
+| `src/build_gobos.py` | Generates all four files (layout values at the top) |
+| `src/shapes.py` | Text-on-a-circle, sectors, and the other primitives |
 | `src/check_rotation.py` | Verifies the rotation requirement |
 | `src/floor_preview.py` | Builds the floor previews |
 
+## Type and marks come from the logo files themselves
+
+Rather than substitute a lookalike typeface, `logo_trace.py` takes the real
+glyphs out of the approved logo artwork: it isolates each wordmark, splits
+it at the gaps between letters, and traces every letter to an outline.
+Letter widths and spacing come from the logo, so the word keeps its true
+proportions when bent around the ring. The Syspex tile and the SysGuard
+helmet are traced the same way. Counters and the grooves inside the Syspex
+letters come through as holes, drawn `fill-rule="evenodd"`.
+
+The only type still set in a substitute face is the small tagline ring.
+
+*For production:* these outlines are traced from 1600 px PNGs, which is
+about 1:1 with their size on the gobo, so they hold up. If you have the
+vector logo (.ai/.eps) or the font itself, send it and the letterforms
+become mathematically exact rather than traced.
+
 ## Any-angle requirement — how it's met, and how that's checked
 
-Nothing in either design has a single "up". Every element is stamped 4,
-12, 24 or 48 times around the centre, which gives the whole disc **4-fold
-rotational symmetry**: turn it 90° and it is the same disc.
+The rim rings, the zebra band, the four brand names, the taglines and the
+dividers are all **4-fold**: they repeat every 90°. The centre marks are
+**180° marks** — the Syspex tile reads the same either way up, and the
+SysGuard helmets are a mirrored pair — so the disc as a whole repeats
+every 180°.
 
-The brand name is set **four times** around the ring, each facing outward.
-Whichever side you stand on, the nearest name is at worst 45° off upright
-— comfortably readable, and the same is true for a projector that is
-mounted crooked.
+Each brand name is set four times facing outward, so whichever side you
+stand on the nearest name is at worst 45° off upright.
 
-Checked, not assumed. `check_rotation.py` rotates each rendered disc by
-90° and compares it with the original:
+`check_rotation.py` turns each rendered disc and compares it with itself:
 
-| Gobo | Mean difference after a 90° turn |
-|---|---|
-| Syspex | 0.26 / 255 |
-| SysGuard | 1.21 / 255 |
+| Gobo | 90°, rings and type only | 180°, whole disc |
+|---|---|---|
+| Syspex | 0.30 / 255 | 0.38 / 255 |
+| SysGuard | 0.09 / 255 | 0.09 / 255 |
 
-That residue is anti-aliasing from the rotation itself, not design drift.
-The rotation-test strips show the worst case (45°) by eye.
+Those residues are anti-aliasing from the rotation, not design drift. In
+short: the frame is identical every 90°, the whole disc every 180°, and
+the centre mark reads either way up — so no projector orientation looks
+wrong.
 
 ## The two designs
 
-**Syspex — technological.** A systems core: four bars stamped at 90°
-interlock into a pinwheel square (systems fitting together, echoing the
-angular interlock in the Syspex mark without copying it), inside nested
-diamonds. Around it, a twelve-node network mesh, radial spokes with inline
-nodes, and circuit traces with end pads on the diagonals. Teal **#00BBB4**
-with white type.
+**Syspex — technological.** The real Syspex tile sits at the centre,
+ringed by a twelve-node network mesh, radial spokes with inline nodes, and
+circuit traces with end pads on the diagonals. Teal **#00BBB4**, white type.
 
-**SysGuard — technologically safe.** A protective sensing field: an
-octagon shield core held in a cyan targeting reticle, ringed by twelve hex
-"protected cells", bold outward hazard chevrons, sensor nodes, and three
-broken detection-sweep arcs that get heavier as they go out. Safety yellow
-**#EED202** with white type, cyan used only as a small detection accent per
-the SysGuard brand rules.
+**SysGuard — safety.** A pedestrian crossing bent into a circle: 24 radial
+zebra bars between two kerb lines, wrapped around the SysGuard helmet.
+Eight cyan sensor arcs keep the "technologically safe" note without
+crowding it. Safety yellow **#EED202**, white type, cyan only as an accent
+per the brand rules.
 
-Both share the same skeleton — rim, name band, tagline band, diagonal
-dividers, emblem — so they read as a pair.
+## The helmet, and why it's a mirrored pair
 
-## Colours
+A hard hat has a definite "up", so it can't simply be dropped into an
+any-angle design. Three options were built and compared:
 
-Official values as supplied: Syspex teal `#00BBB4`, SysGuard safety yellow
-`#EED202`. (Sampling the approved logo PNGs gives `#19BCB9` and `#FFF200`
-— close, but the official values are used.)
+- **Four helmets in a rosette** — keeps perfect 4-fold symmetry, but at
+  that size the four brims interlock and the cluster reads as a gear, not
+  as helmets. Rejected.
+- **One upright helmet** — clearest and truest to the logo, but it is
+  upside down from the far side, where it reads as a bowl.
+- **A mirrored pair, 180° apart** *(chosen)* — the helmet stays
+  unmistakable, the disc still repeats every 180°, and from a side view the
+  pair is merely on its side, which still reads as helmets and looks
+  deliberate.
 
-## Before production — two things to settle
+Both alternatives are in `artwork/` if you'd rather have one of those.
 
-1. **Type.** Neither brand face is installed here, so the type is set in
-   Liberation Sans Bold as a stand-in. The wordmarks use a squared techno
-   face; swap that in and convert to outlines before the gobo is cut.
-2. **The tagline ring is fine detail.** On a 2 m projection the tagline is
-   roughly 3 cm tall (Syspex) and 2 cm (SysGuard, whose tagline is twice as
-   long). It will read standing over it, but softens at a distance. Drop it
-   if the gobo will be seen mainly from across a room.
+## Before production
 
-Also worth knowing: these use the brand *names as set type*, not the logo
-lockups. Four copies at four rotations is what the any-angle requirement
-needs, and rotating an approved logo is not allowed under the SysGuard
-brand rules. If a literal logo is wanted, it would have to sit once in the
-centre, upright — which gives up the any-angle property.
+The tagline ring is fine detail: on a 2 m projection it is roughly 2–3 cm
+tall. It reads standing over it but softens from across a room — drop it if
+the gobo will mostly be seen from a distance.
 
 ## Gobo convention
 
-Black = no light (the floor shows through); colour = open aperture. Same
-as the other files in this project.
+Black = no light (the floor shows through); colour = open aperture. Same as
+the other files in this project.

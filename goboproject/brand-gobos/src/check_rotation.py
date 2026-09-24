@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Prove the 'looks right from any angle' requirement.
 
-1. Numerically: rotating the disc by 90 degrees must reproduce it exactly.
-   Any leftover difference is anti-aliasing, not design.
+1. Numerically: how closely the disc reproduces itself when turned. The
+   rings, zebra, names and taglines are all 4-fold, so they repeat every
+   90 degrees; the centre marks (the Syspex tile, the SysGuard helmets)
+   are 180-degree marks, so the disc as a whole repeats every 180. Both
+   figures are reported, and the 180 one is the design's real period.
 2. Visually: a strip of the gobo at several projector rotations, so the
    worst case (45 degrees, the furthest any name can be from upright) can
    be judged by eye.
@@ -27,13 +30,20 @@ def rot(img, deg):
 def main():
     for n in NAMES:
         img = cv2.imread(os.path.join(ART, n + "-2000.png"))
-        d = np.abs(rot(img, 90).astype(int) - img.astype(int))
         # ignore the very edge, where rotation resampling clips the disc
         m = np.zeros(img.shape[:2], np.uint8)
         cv2.circle(m, (1000, 1000), 930, 255, -1)
-        d = d[m > 0]
-        print(f"{n}: 90-degree self-match -> mean diff {d.mean():.2f}/255, "
-              f"{(d.max(-1) if d.ndim > 1 else d).mean():.2f} worst-channel mean")
+        outside = np.zeros(img.shape[:2], np.uint8)
+        cv2.circle(outside, (1000, 1000), 930, 255, -1)
+        cv2.circle(outside, (1000, 1000), 340, 0, -1)     # rings only, no centre mark
+        res = []
+        for deg, mask, what in ((90, outside, "rings/type only"),
+                                (90, m, "whole disc"), (180, m, "whole disc")):
+            d = np.abs(rot(img, deg).astype(int) - img.astype(int))[mask > 0]
+            res.append(f"{deg:>3}deg {what:<16} {d.mean():5.2f}/255")
+        print(f"{n}:")
+        for r in res:
+            print("   ", r)
 
         tiles = []
         for deg in (0, 15, 30, 45):

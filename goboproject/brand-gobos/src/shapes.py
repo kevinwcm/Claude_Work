@@ -116,3 +116,43 @@ def arc_text(text, font, size, cx, cy, radius, centre_deg, colour,
 
 def arc_text_width_deg(text, font, size, radius, tracking=0.0):
     return math.degrees(text_width(text, font, size, tracking) / radius)
+
+
+def sector(cx, cy, r0, r1, a0, a1, colour, opacity=1.0):
+    """Filled annular sector between radii r0..r1 and angles a0..a1."""
+    x0o, y0o = pol(cx, cy, r1, a0); x1o, y1o = pol(cx, cy, r1, a1)
+    x1i, y1i = pol(cx, cy, r0, a1); x0i, y0i = pol(cx, cy, r0, a0)
+    large = 1 if abs(a1 - a0) > 180 else 0
+    d = (f"M{P(x0o,y0o)} A{r1:.2f},{r1:.2f} 0 {large} 1 {P(x1o,y1o)} "
+         f"L{P(x1i,y1i)} A{r0:.2f},{r0:.2f} 0 {large} 0 {P(x0i,y0i)} Z")
+    return f'<path d="{d}" fill="{colour}" fill-opacity="{opacity}"/>'
+
+
+def place(art, cx, cy, radius, deg, height, colour, opacity=1.0, rotate=True):
+    """Drop a traced logo part at radius/angle, scaled to `height`, its top
+    facing outward so it reads upright to a viewer on that side."""
+    w, h = art["x1"] - art["x0"], art["y1"] - art["y0"]
+    s = height / h
+    mx, my = (art["x0"] + art["x1"]) / 2, (art["y0"] + art["y1"]) / 2
+    x, y = pol(cx, cy, radius, deg)
+    rot = f" rotate({deg})" if rotate else ""
+    return (f'<g transform="translate({x:.2f},{y:.2f}){rot} scale({s:.5f}) '
+            f'translate({-mx:.2f},{-my:.2f})">'
+            f'<path d="{art["path"]}" fill="{colour}" fill-opacity="{opacity}" '
+            f'fill-rule="evenodd"/></g>')
+
+
+def arc_wordmark(wm, cx, cy, radius, centre_deg, target_deg, colour, opacity=1.0):
+    """Set a traced wordmark along a circle, keeping the logo's own letter
+    widths and letter-spacing. Scaled so the word spans target_deg."""
+    scale = math.radians(target_deg) * radius / wm["width"]
+    mid = wm["left"] + wm["width"] / 2
+    out = []
+    for l in wm["letters"]:
+        deg = centre_deg + math.degrees((l["cx"] - mid) * scale / radius)
+        x, y = pol(cx, cy, radius, deg)
+        out.append(f'<g transform="translate({x:.2f},{y:.2f}) rotate({deg:.3f}) '
+                   f'scale({scale:.5f}) translate({-l["cx"]:.2f},{-wm["baseline"]:.2f})">'
+                   f'<path d="{l["path"]}" fill-rule="evenodd"/></g>')
+    return (f'<g fill="{colour}" fill-opacity="{opacity}">' + "".join(out) + "</g>",
+            wm["cap"] * scale)
