@@ -104,10 +104,13 @@ def stripe_field():
     g.append(f'<rect x="{X0:.1f}" y="{y0:.1f}" width="{X1 - X0:.1f}" height="{h:.1f}" '
              f'fill="none" stroke="{BLACK}" stroke-width="{STROKE}"/>')
     g.append('<g clip-path="url(#field-clip)">')
+    # anchor the phase at the TOP edge (band 0 starts flush at the box's
+    # top-left corner, tapering to a point on the left edge as it drops
+    # to the bottom -- matches the small bright sliver seen in the photo)
     for i in range(0, n_half, 2):                # even indices = bright stripes
-        xb0 = X0 + i * period
-        xb1 = xb0 + period
-        xt0, xt1 = xb0 + shear, xb1 + shear
+        xt0 = X0 + i * period
+        xt1 = xt0 + period
+        xb0, xb1 = xt0 - shear, xt1 - shear
         pts = f"{xt0:.1f},{y0:.1f} {xt1:.1f},{y0:.1f} {xb1:.1f},{y1:.1f} {xb0:.1f},{y1:.1f}"
         g.append(f'<polygon points="{pts}" fill="{YELLOW}" stroke="{BLACK}" '
                  f'stroke-width="{STROKE}" stroke-linejoin="round"/>')
