@@ -46,6 +46,11 @@ def line(text, font, target_w, baseline, tracking=0.0):
     return d
 
 
+def line_at(text, font, size, baseline, tracking=0.0):
+    d, _ = text_path(text, font, size, C, baseline, "middle", tracking)
+    return d
+
+
 # --------------------------------------------------------------- globe bits
 def globe(proj, land, style):
     g = []
@@ -135,10 +140,12 @@ def rings(style):
 
 def headline(style):
     g = ['<g fill="#FFFFFF">']
+    # lines 3 and 4 share one point size so the lockup stays even
+    s34 = fit("DIGITAL DAY", BOLD_I, 1200)
     g.append(line("WELCOME", BOLD_I, 1080, 808))
     g.append(line("to", BOLD_I, 150, 953))
-    g.append(line("NESTLÉ DIGITAL", BOLD_I, 1290, 1130))
-    g.append(line("SUPPLY CHAIN", BOLD_I, 1175, 1303))
+    g.append(line_at("CEC FSC", BOLD_I, s34, 1130))
+    g.append(line_at("DIGITAL DAY", BOLD_I, s34, 1303))
     g.append("</g>")
     return "\n".join(g)
 

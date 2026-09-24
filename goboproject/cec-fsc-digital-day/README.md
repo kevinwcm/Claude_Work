@@ -1,7 +1,7 @@
-# Nestlé Digital Supply Chain — gobo projection
+# CEC FSC Digital Day — gobo projection
 
 Replaces the printed floor sticker at the Nestlé entrance with a SysGuard gobo
-projection, using Nestlé's own Digital Day artwork and adding a discreet
+projection, reusing the Digital Day theme artwork and adding a discreet
 Syspex / SysGuard credit.
 
 ## The rule that shapes the whole design
@@ -46,7 +46,7 @@ Approved logo files were used as-is; neither has been redrawn or recoloured.
 1. **Gobo glass size** from the Warton projector spec (outer diameter and image
    diameter). The artwork is square and scales to any size, but the maker needs
    the exact figures.
-2. **Nestlé's original sticker artwork** (AI/EPS/PDF). The headline here is set
+2. **Nestlé’s original sticker artwork** (AI/EPS/PDF). The headline here is set
    in Liberation Sans Bold Italic as a stand-in; the real event font should be
    dropped in and converted to outlines.
 3. **Mono logo files** if Concept B goes ahead as a true two-colour gobo — the
@@ -63,6 +63,8 @@ and when Nestlé wants it before committing to a fixture.
 
 ## Production spec (draft, for the gobo maker)
 
+- Headline copy, four lines: `WELCOME` / `to` / `CEC FSC` / `DIGITAL DAY`
+  (lines 3 and 4 share one point size so the lockup stays even)
 - Artwork: square, 1:1, image circle fills the full width
 - Colour mode: A = full-colour glass gobo; B = two-colour (white + `#FFD600`)
 - Minimum stroke weight in the artwork: 2 px at 2000 px square (~0.1% of
