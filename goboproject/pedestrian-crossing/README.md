@@ -15,10 +15,12 @@ file to edit. This reconstructs it as a clean, editable vector so amendments
 | `artwork/glow-simulation.png` | The SVG rendered as projected light, for comparing against the real thing |
 | `reference/pedestrian-crossing-current-photo.jpg` | The photo this was reconstructed from |
 | `reference/powered-by-syspex-reference.pdf` | Kevin's other gobo file for this fixture, used to match canvas size and drawing conventions |
-| `reference/warehouse-aisle-original.png` | Site photo of a different aisle, still showing the old blue LED floor-strip crossing it's meant to replace |
-| `mockups/warehouse-aisle-mockup.png` | That same photo with the LED strip removed and this design composited in as projected light |
+| `reference/warehouse-original.jpg` | Original warehouse site photo (clean, no mockup) |
+| `reference/warehouse-aisle-original.png` | Kevin's annotated crop of that photo, with an earlier mockup crossing and the projector-aim arrow — used only to locate where the crossing goes |
+| `mockups/warehouse-walkway-mockup.jpg` | The original photo with this design projected onto the floor at true proportions |
 | `src/build.py` | Script that generates the SVG (edit the constants at the top to amend it) |
-| `src/compose.py` | Script that builds the warehouse mockup (erases the old fixture, warps the new artwork onto the same floor quad) |
+| `src/floor_model.py` | Camera/floor model of the warehouse photo (real-world metres on the floor) |
+| `src/place_walkway.py` | Builds the warehouse mockup from the SVG and the floor model |
 
 ## Sizing
 
@@ -69,20 +71,36 @@ Canva elements. The SVG is there too if you'd rather start from that.
 
 ## The warehouse mockup
 
-`reference/warehouse-aisle-original.png` is a site photo (with a red dotted
-annotation showing the proposed ceiling-mounted projector's aim) of an aisle
-that currently has a physical blue LED zebra-crossing strip set into the
-floor. `mockups/warehouse-aisle-mockup.png` shows that same aisle with the
-LED strip erased and this gobo pattern warped onto the same patch of floor
-as projected light, so it can stand in for "what a gobo would look like
-here instead of the LED fixture."
+`mockups/warehouse-walkway-mockup.jpg` places this design on the floor of
+`reference/warehouse-original.jpg`, at the spot Kevin's annotated crop
+marked: across the forklift cross-aisle, from the centre rack block's row
+end out to the right-hand rack end.
 
-The floor quad was measured directly off the photo (the blue LED end-caps
-mark the crossing's two short ends), then eased outward by 20% because the
-white zebra stripes themselves run a little wider than those accent strips.
-The old fixture is removed by cloning nearby clean floor over it, not by
-guesswork — same technique as the Nestlé entrance mockup earlier in this
-project.
+**How it's placed.** Rather than stretching the artwork into a hand-picked
+four-corner shape, `floor_model.py` rebuilds the camera from the photo
+(vanishing points of the racking and uprights), giving real-world metres on
+the floor. The walkway is then laid down as a true rectangle with the
+artwork's own proportions, so width and length can't drift out of ratio.
+The model checks out against the scene: the four row-end bollards all land
+at the same depth (6.3 m ± 0.2), the painted yellow dashes fall on one
+straight line, and both workers measure 1.73–1.75 m tall.
+
+**Size.** The clear cross-aisle there is only about 4.6 m, so the full
+5.8 m design would run under the pallets. The mockup keeps the design's
+exact proportions and sizes it to span the aisle: **4.2 m × 1.73 m**. That
+is a lens/throw choice on the projector, not a change to the artwork.
+
+**Light, not paint.** The pattern is added as light reflected by the floor
+(the concrete texture shows through), the black text cut-outs stay unlit,
+and the near end sits behind the bollard, the worker and the railing
+rather than being painted over them.
+
+**Worth knowing.** At this size the "PEDESTRIAN CROSSING" bands are only
+~11 cm deep on the floor, which is hard to read from a forklift seat. For a
+floor crossing, thicker text bands would help.
+
+The earlier attempt at this mockup (hand-picked corners, whole square
+canvas stretched onto the floor) came out far too thin and was replaced.
 
 ## Fix log
 
