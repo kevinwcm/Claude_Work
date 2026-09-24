@@ -28,8 +28,8 @@ this drops into the same fixture: 2250×2250pt canvas, aperture
 
 Matching the convention in the reference PDF: unfilled canvas = opaque
 (blocked), yellow fill = open aperture (light passes), black = a cut-out
-inside an open area (the text and icons), thin black stroke = the cut
-line around every open shape.
+inside an open area (the text and icons). No border/outline stroke on
+the open shapes — edges are just the fill boundary, at Kevin's request.
 
 The top band is rotated a full 180° about its own centre — not just flipped
 — exactly as "Secured by SysGuard" is in the reference file. That's what

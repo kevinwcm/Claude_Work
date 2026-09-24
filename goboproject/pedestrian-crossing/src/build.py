@@ -10,7 +10,9 @@ fixture. Convention (matched to that reference file):
   - yellow fill      = open aperture (light passes)
   - black fill       = a cut-out INSIDE an open area (text, icon) -- still
                         blocked, drawn on top of the yellow
-  - thin black stroke = cut/kerf outline around every open shape
+
+No stroke/border on the open shapes -- edges are just the fill boundary,
+per Kevin's request to drop the black outline.
 
 Top band is rotated 180 degrees about its own centre (not just flipped),
 matching the "Secured by SysGuard" band in the reference file -- so each
@@ -28,7 +30,6 @@ os.makedirs(OUT, exist_ok=True)
 BOLD = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
 YELLOW = "#FFF200"
 BLACK = "#000000"
-STROKE = 6.0
 
 CANVAS = 2250
 # same outer envelope as the "Powered by Syspex" reference (~5.8m x 2.4m)
@@ -84,7 +85,7 @@ def label_group(cx, cy, band_top, band_bot):
 def band(y0, y1, mirrored):
     cx, cy = (X0 + X1) / 2, (y0 + y1) / 2
     g = [f'<rect x="{X0:.1f}" y="{y0:.1f}" width="{X1 - X0:.1f}" height="{y1 - y0:.1f}" '
-         f'fill="{YELLOW}" stroke="{BLACK}" stroke-width="{STROKE}"/>']
+         f'fill="{YELLOW}"/>']
     inner = label_group(cx, cy, y0, y1)
     if mirrored:
         g.append(f'<g transform="rotate(180 {cx:.1f} {cy:.1f})">{inner}</g>')
@@ -101,8 +102,6 @@ def stripe_field():
     period = (X1 - X0) / n_half
     g = [f'<clipPath id="field-clip"><rect x="{X0:.1f}" y="{y0:.1f}" '
          f'width="{X1 - X0:.1f}" height="{h:.1f}"/></clipPath>']
-    g.append(f'<rect x="{X0:.1f}" y="{y0:.1f}" width="{X1 - X0:.1f}" height="{h:.1f}" '
-             f'fill="none" stroke="{BLACK}" stroke-width="{STROKE}"/>')
     g.append('<g clip-path="url(#field-clip)">')
     # anchor the phase at the TOP edge (band 0 starts flush at the box's
     # top-left corner, tapering to a point on the left edge as it drops
@@ -118,8 +117,7 @@ def stripe_field():
         xt1 = xt0 + period
         xb0, xb1 = xt0 - shear, xt1 - shear
         pts = f"{xt0:.1f},{y0:.1f} {xt1:.1f},{y0:.1f} {xb1:.1f},{y1:.1f} {xb0:.1f},{y1:.1f}"
-        g.append(f'<polygon points="{pts}" fill="{YELLOW}" stroke="{BLACK}" '
-                 f'stroke-width="{STROKE}" stroke-linejoin="round"/>')
+        g.append(f'<polygon points="{pts}" fill="{YELLOW}"/>')
     g.append("</g>")
     return "\n".join(g)
 
@@ -132,7 +130,6 @@ def build():
         f'(~5.8m x 2.4m at {SCALE_PT_PER_M:.1f} pt/m), same envelope as the '
         f'"Powered by Syspex" reference file. Unfilled = opaque, yellow = open, '
         f'black = cut-out on an open area. -->',
-        f'<rect x="{X0:.1f}" y="{Y0:.1f}" width="{X1 - X0:.1f}" height="3.0" fill="{BLACK}"/>',
         band(*TOP_BAND, mirrored=True),
         stripe_field(),
         band(*BOT_BAND, mirrored=False),
