@@ -15,7 +15,10 @@ file to edit. This reconstructs it as a clean, editable vector so amendments
 | `artwork/glow-simulation.png` | The SVG rendered as projected light, for comparing against the real thing |
 | `reference/pedestrian-crossing-current-photo.jpg` | The photo this was reconstructed from |
 | `reference/powered-by-syspex-reference.pdf` | Kevin's other gobo file for this fixture, used to match canvas size and drawing conventions |
+| `reference/warehouse-aisle-original.png` | Site photo of a different aisle, still showing the old blue LED floor-strip crossing it's meant to replace |
+| `mockups/warehouse-aisle-mockup.png` | That same photo with the LED strip removed and this design composited in as projected light |
 | `src/build.py` | Script that generates the SVG (edit the constants at the top to amend it) |
+| `src/compose.py` | Script that builds the warehouse mockup (erases the old fixture, warps the new artwork onto the same floor quad) |
 
 ## Sizing
 
@@ -63,6 +66,23 @@ own device, not from a link, so: download `artwork/pedestrian-crossing.pdf`,
 then in Canva use **Create a design → Import file** (or drag the PDF into
 your Projects) and let it convert the PDF's shapes and text into editable
 Canva elements. The SVG is there too if you'd rather start from that.
+
+## The warehouse mockup
+
+`reference/warehouse-aisle-original.png` is a site photo (with a red dotted
+annotation showing the proposed ceiling-mounted projector's aim) of an aisle
+that currently has a physical blue LED zebra-crossing strip set into the
+floor. `mockups/warehouse-aisle-mockup.png` shows that same aisle with the
+LED strip erased and this gobo pattern warped onto the same patch of floor
+as projected light, so it can stand in for "what a gobo would look like
+here instead of the LED fixture."
+
+The floor quad was measured directly off the photo (the blue LED end-caps
+mark the crossing's two short ends), then eased outward by 20% because the
+white zebra stripes themselves run a little wider than those accent strips.
+The old fixture is removed by cloning nearby clean floor over it, not by
+guesswork — same technique as the Nestlé entrance mockup earlier in this
+project.
 
 ## Fix log
 
