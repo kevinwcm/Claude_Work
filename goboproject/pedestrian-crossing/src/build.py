@@ -106,8 +106,14 @@ def stripe_field():
     g.append('<g clip-path="url(#field-clip)">')
     # anchor the phase at the TOP edge (band 0 starts flush at the box's
     # top-left corner, tapering to a point on the left edge as it drops
-    # to the bottom -- matches the small bright sliver seen in the photo)
-    for i in range(0, n_half, 2):                # even indices = bright stripes
+    # to the bottom -- matches the small bright sliver seen in the photo).
+    # The shear is bigger than one period, so the band that starts just
+    # past the top-right corner (off-canvas) swings back into frame near
+    # the bottom-right corner -- walk a few extra periods either side and
+    # let the clip crop whatever doesn't land in the box, rather than
+    # special-casing each corner.
+    overrun = math.ceil(shear / period) + 1
+    for i in range(-2 * overrun, n_half + 2 * overrun, 2):   # even = bright stripes
         xt0 = X0 + i * period
         xt1 = xt0 + period
         xb0, xb1 = xt0 - shear, xt1 - shear

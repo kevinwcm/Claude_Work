@@ -10,6 +10,7 @@ file to edit. This reconstructs it as a clean, editable vector so amendments
 | File | What it is |
 |---|---|
 | `artwork/pedestrian-crossing.svg` | Editable vector, production master |
+| `artwork/pedestrian-crossing.pdf` | Same artwork as a 2250×2250pt PDF, for importing into Canva |
 | `artwork/pedestrian-crossing-2400.png` | 2400 px flat preview |
 | `artwork/glow-simulation.png` | The SVG rendered as projected light, for comparing against the real thing |
 | `reference/pedestrian-crossing-current-photo.jpg` | The photo this was reconstructed from |
@@ -54,3 +55,22 @@ Everything that defines the layout is at the top of `src/build.py`
 (band heights, stripe angle, stripe count, wording, colours). Change a
 value and re-run `python3 build.py` to regenerate the SVG — no need to
 hand-edit paths.
+
+## Editing in Canva
+
+Canva's "import a PDF as a design" only works from a file already on your
+own device, not from a link, so: download `artwork/pedestrian-crossing.pdf`,
+then in Canva use **Create a design → Import file** (or drag the PDF into
+your Projects) and let it convert the PDF's shapes and text into editable
+Canva elements. The SVG is there too if you'd rather start from that.
+
+## Fix log
+
+- The first version anchored the diagonal stripes to the bottom edge,
+  leaving a blocked (dark) corner top-left instead of the small bright
+  sliver in the photo. Re-anchored to the top edge instead.
+- That fix then clipped a stripe short at the top-right corner. The shear
+  is bigger than one stripe period, so the band that "wraps round" to
+  cover the bottom-right corner starts off-canvas — the loop now walks a
+  few extra periods either side and lets the clip crop whatever falls
+  outside the box, instead of assuming one band per corner.
