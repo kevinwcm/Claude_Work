@@ -22,8 +22,20 @@ and only the globe, the type and the ring actually glow.
 | `artwork/gobo-B-twocolour-2400.png` | Concept B, 2400 px preview |
 | `mockups/mockup-A-fullcolour.png` | Concept A shown on the real entrance floor |
 | `mockups/mockup-B-twocolour.png` | Concept B shown on the real entrance floor |
+| `reference/entrance-sticker-removed.png` | The entrance photo with the existing floor sticker removed (the mockups' base) |
 | `reference/` | Current entrance photo and the logo files used |
 | `src/` | Scripts that generate the artwork and the mockups |
+
+## How the mockups are made
+
+`src/mockup.py` first removes the existing floor sticker completely. It
+rebuilds the concrete with a smooth fill that matches the real floor all
+round the sticker's edge (pillars treated as walls, so no navy bleeds in),
+then adds real concrete texture sampled from clean floor nearby. The gobo is
+then added as light only: screen-blended over the bare floor, so the
+concrete shows through and the artwork's dark areas add nothing. There is
+deliberately no darkening under the projection, because a dark disc reads
+as a sticker.
 
 ## The two concepts
 
