@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Add one green laser walkway line to the corridor photo.
 
-Position: the right-hand line from the earlier two-line mockup, mapped onto
-the original photo by feature matching (that mockup is this photo, cropped
-and squashed vertically). It passes within 1.5 px of the corridor's
-vanishing point (616, 1003), found from the pipes, skirting and window
-lines, so it runs truly parallel to the right-hand wall.
+Position: on the walkway between the bollard/chain line and the right-hand
+wall, 35% of the walkway's width out from the wall. Both edges are lines
+through the corridor's vanishing point (616, 1003), found from the pipes,
+skirting and window lines, so a fixed fraction between them is a line
+truly parallel to the wall. It runs from the bottom of the frame to the
+far end of the walkway, where the bollard chain ends.
 
 Rendering: on a floor, image distance below the horizon is proportional to
 1/depth, so the line's width is scaled by (y - horizon). A bright core, a
@@ -24,9 +25,20 @@ PHOTO = os.path.join(HERE, "..", "reference", "corridor-original.jpg")
 OUT = os.path.join(HERE, "..", "mockups", "corridor-green-laser-line.jpg")
 
 VP = np.array([616.3, 1003.4])       # corridor vanishing point (= horizon height)
-NEAR = np.array([937.0, 1955.0])     # mapped from the earlier mockup's right line
-FAR_Y = 1121.0                        # where that line ended, far down the corridor
+WALL_ANGLE = 1.04323                 # wall base (skirting/floor edge) from VP, radians
+BOLLARD_ANGLE = 2.17958              # bollard/chain line from VP, radians
+FROM_WALL = 0.35                      # fraction of walkway width, measured from the wall
+FAR_Y = 1042.0                        # far end of the walkway (end of the bollard chain)
 CORE_HALF_W_AT_BOTTOM = 5.5          # px at the bottom edge of the photo
+
+
+def _x_on(angle, y):
+    return VP[0] + (y - VP[1]) / np.tan(angle)
+
+
+# the laser line: a point near the bottom, FROM_WALL of the way in from the wall
+_Y = 1950.0
+NEAR = np.array([(1 - FROM_WALL) * _x_on(WALL_ANGLE, _Y) + FROM_WALL * _x_on(BOLLARD_ANGLE, _Y), _Y])
 SS = 2                                # supersampling
 
 
@@ -38,12 +50,12 @@ def main():
     n = np.array([-d[1], d[0]])
     dist = np.abs((xs - VP[0]) * n[0] + (ys - VP[1]) * n[1])      # px from the line's axis
     depth_scale = np.clip((ys - VP[1]) / (H - VP[1]), 0, None)    # 1 at bottom, 0 at horizon
-    hw = CORE_HALF_W_AT_BOTTOM * depth_scale + 0.35
+    hw = CORE_HALF_W_AT_BOTTOM * depth_scale + 0.5
     core = np.clip(1.5 - dist / hw, 0, 1) ** 1.2                  # anti-aliased solid core
     glow = np.exp(-(dist / (hw * 2.2 + 1.2)) ** 2)
     halo = np.exp(-(dist / (hw * 7 + 4)) ** 2)
     # soft start at the far end, running off the bottom of the frame
-    extent = np.clip((ys - FAR_Y) / 25.0, 0, 1) * (ys > VP[1] + 20)
+    extent = np.clip((ys - FAR_Y) / 6.0, 0, 1)
     core, glow, halo = (a * extent for a in (core, glow, halo))
     down = lambda a: cv2.resize(a, (W, H), interpolation=cv2.INTER_AREA)
     core, glow, halo = down(core), down(glow), down(halo)
