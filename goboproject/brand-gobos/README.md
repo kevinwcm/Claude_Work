@@ -10,6 +10,7 @@ however the projector is rotated or aligned.
 | `artwork/gobo-sysguard-alt-chevron.svg` | Variant: chevron ring instead of tape |
 | `artwork/gobo-sysguard-alt-zone.svg` | Variant: quiet zone ring instead of tape |
 | `artwork/*-2000.png` | 2000 px flat previews |
+| `artwork/gobo-syspex-3000.png`, `gobo-sysguard-3000.png` | 3000 px masters |
 | `artwork/*-rotation-test.png` | The same gobo at 0°, 15°, 30° and 45° |
 | `artwork/*-floor-preview.jpg` | Shown as projected light on a real floor |
 | `reference/logo-sysguard-2026.png` | Updated SysGuard logo — the helmet is traced from this |
@@ -96,6 +97,13 @@ Both alternatives are in `artwork/` if you'd rather swap.
 The tagline ring is fine detail: on a 2 m projection it is roughly 2–3 cm
 tall. It reads standing over it but softens from across a room — drop it if
 the gobo will mostly be seen from a distance.
+
+## Raster sizes
+
+The two masters render at 2000 px and 3000 px. Both come straight from the
+SVG, so they are true renders rather than upscales — `build_gobos.py` takes
+the size as a parameter, so any other size is one line away. For the gobo
+maker itself, send the SVG: it has no resolution at all.
 
 ## Gobo convention
 

@@ -216,6 +216,9 @@ if __name__ == "__main__":
             (SYSGUARD, sysguard_emblem, sg_wm, "-alt-zone", dict(ret_r=None, band="zone"))]
     for b, em, wm, suffix, kw in jobs:
         path, svg = build(b, em, wm, suffix, **kw)
-        cairosvg.svg2png(bytestring=svg.encode(), output_width=2000, output_height=2000,
-                         write_to=os.path.join(OUT, b["file"] + suffix + "-2000.png"))
-        print("   wrote", path)
+        # the masters also go out at 3000 px; the alternates stay at 2000
+        sizes = (2000, 3000) if not suffix else (2000,)
+        for px in sizes:
+            cairosvg.svg2png(bytestring=svg.encode(), output_width=px, output_height=px,
+                             write_to=os.path.join(OUT, f"{b['file']}{suffix}-{px}.png"))
+        print("   wrote", path, "at", ", ".join(f"{p}px" for p in sizes))
